@@ -904,7 +904,61 @@
             <div class="avatar-wrapper" id="avatar-container">
                 <div class="energy-ring"></div>
                 <div class="energy-ring-2"></div>
-                <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&q=80&w=800" alt="Girish Lade" class="avatar">
+                <!-- Documentary Style SVG Profile Avatar -->
+                <svg class="avatar" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#111111"/>
+                            <stop offset="100%" stop-color="#000000"/>
+                        </radialGradient>
+                        <linearGradient id="rimLight" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#00e5ff"/>
+                            <stop offset="50%" stop-color="#444444"/>
+                            <stop offset="100%" stop-color="#ff5e00"/>
+                        </linearGradient>
+                    </defs>
+                    
+                    <!-- Base Plate -->
+                    <rect width="400" height="400" fill="url(#bgGrad)"/>
+                    
+                    <!-- Tech Grid -->
+                    <g stroke="rgba(0, 229, 255, 0.08)" stroke-width="1">
+                        <path d="M 0 50 L 400 50 M 0 100 L 400 100 M 0 150 L 400 150 M 0 200 L 400 200 M 0 250 L 400 250 M 0 300 L 400 300 M 0 350 L 400 350" />
+                        <path d="M 50 0 L 50 400 M 100 0 L 100 400 M 150 0 L 150 400 M 200 0 L 200 400 M 250 0 L 250 400 M 300 0 L 300 400 M 350 0 L 350 400" />
+                    </g>
+
+                    <!-- Target Tracking UI -->
+                    <circle cx="200" cy="200" r="140" fill="none" stroke="rgba(255, 94, 0, 0.15)" stroke-width="2" stroke-dasharray="10 5"/>
+                    <circle cx="200" cy="200" r="120" fill="none" stroke="rgba(0, 229, 255, 0.15)" stroke-width="1" stroke-dasharray="4 8"/>
+
+                    <!-- Subject Silhouette (Mysterious Developer) -->
+                    <!-- Head -->
+                    <path d="M 200 100 C 160 100, 140 140, 140 180 C 140 220, 160 250, 180 270 C 180 270, 190 290, 190 310 L 210 310 C 210 290, 220 270, 220 270 C 240 250, 260 220, 260 180 C 260 140, 240 100, 200 100 Z" fill="#0a0a0a" stroke="url(#rimLight)" stroke-width="3"/>
+                    
+                    <!-- Shoulders / Torso -->
+                    <path d="M 190 310 C 150 310, 100 360, 80 400 L 320 400 C 300 360, 250 310, 210 310 Z" fill="#0a0a0a" stroke="url(#rimLight)" stroke-width="3"/>
+                    
+                    <!-- Cybernetic/AI Mind Connections -->
+                    <g fill="none" stroke="#00e5ff" stroke-width="1.5" opacity="0.6">
+                        <path d="M 170 140 L 190 160 L 180 180" />
+                        <path d="M 230 140 L 210 160 L 220 180" />
+                        <path d="M 190 160 L 210 160" />
+                        <circle cx="170" cy="140" r="3" fill="#00e5ff" />
+                        <circle cx="230" cy="140" r="3" fill="#ff5e00" />
+                        <circle cx="180" cy="180" r="2" fill="#00e5ff" />
+                        <circle cx="220" cy="180" r="2" fill="#00e5ff" />
+                    </g>
+
+                    <!-- Scan Line / HUD Elements -->
+                    <rect x="0" y="198" width="400" height="2" fill="rgba(0, 229, 255, 0.4)">
+                        <animate attributeName="y" values="-20;420;-20" dur="5s" repeatCount="indefinite" />
+                    </rect>
+                    <path d="M 190 200 L 210 200 M 200 190 L 200 210" stroke="#ff3333" stroke-width="2" opacity="0.8"/>
+                    
+                    <!-- Data / Tech Overlays -->
+                    <text x="125" y="380" fill="rgba(0, 229, 255, 0.5)" font-family="monospace" font-size="12" letter-spacing="4">SUBJECT // LADE</text>
+                    <text x="145" y="60" fill="rgba(255, 94, 0, 0.5)" font-family="monospace" font-size="10" letter-spacing="2">SCAN INITIALIZED</text>
+                </svg>
             </div>
         </div>
         <div class="scroll-indicator">
