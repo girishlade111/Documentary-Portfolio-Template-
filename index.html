@@ -203,6 +203,122 @@
         }
 
         /* ========================================
+           DOCUMENTARY SPECIFIC COMPONENTS
+           ======================================== */
+        .focus-reveal {
+            filter: blur(15px);
+            opacity: 0;
+            transform: scale(1.05);
+            transition: filter 1.5s cubic-bezier(0.2, 1, 0.2, 1), opacity 1.5s ease, transform 1.5s ease;
+        }
+        
+        .focus-reveal.active {
+            filter: blur(0);
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .lower-third {
+            background: linear-gradient(90deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
+            border-left: 5px solid #ff3333; /* Camera REC red */
+            padding: 2rem 3rem;
+            display: inline-block;
+            backdrop-filter: blur(8px);
+            position: relative;
+            box-shadow: -10px 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .lower-third::before {
+            content: 'SUBJECT PROFILE // RECORDING';
+            position: absolute;
+            top: -12px; left: 0;
+            background: #ff3333;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            font-family: monospace;
+        }
+
+        .subtitle-container {
+            margin-top: auto; 
+            padding-bottom: 10vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            z-index: 20;
+        }
+
+        .subtitle-cc {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.85);
+            color: #f0f0f0;
+            font-family: var(--font-body);
+            font-size: clamp(1.1rem, 2vw, 1.8rem);
+            padding: 6px 16px;
+            margin: 3px 0;
+            line-height: 1.5;
+            text-align: center;
+            border-radius: 3px;
+            text-shadow: 1px 1px 2px #000;
+        }
+        
+        .subtitle-speaker {
+            color: #ffd700; /* Standard documentary yellow for speakers */
+            font-size: clamp(0.8rem, 1.2vw, 1rem);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.9);
+        }
+
+        .archival-stamp {
+            position: absolute;
+            top: 15px; right: 15px;
+            font-family: monospace;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.7rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 3px 8px;
+            letter-spacing: 2px;
+            background: rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .credits-wrapper {
+            width: 100%;
+            text-align: center;
+            font-family: var(--font-body);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .credits-wrapper.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .credit-role {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 0.3rem;
+        }
+
+        .credit-name {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 3rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            font-family: var(--font-cinematic);
+        }
+
+        /* ========================================
            HERO SECTION
            ======================================== */
         #hero {
@@ -774,63 +890,52 @@
     <div class="energy-flash" id="energy-flash"></div>
 
     <!-- Hero Section -->
-    <section id="hero">
+    <section id="hero" class="focus-reveal">
         <div class="hero-content">
-            <h1 class="hero-title" id="main-title">GIRISH LADE</h1>
-            <div class="hero-subtitle-wrapper">
-                <span id="typed-text"></span><span class="typed-cursor"></span>
+            <div class="lower-third reveal-up">
+                <h1 class="hero-title" id="main-title">GIRISH LADE</h1>
+                <div class="hero-subtitle-wrapper">
+                    <span id="typed-text"></span><span class="typed-cursor"></span>
+                </div>
+                <p class="hero-caption" id="hero-caption">FILE NO: AI-882 // CLASSIFIED INTEL</p>
             </div>
-            <p class="hero-caption" id="hero-caption">A modern builder shaping intelligent systems.</p>
         </div>
         <div class="hero-visual">
             <div class="avatar-wrapper" id="avatar-container">
                 <div class="energy-ring"></div>
                 <div class="energy-ring-2"></div>
-                <!-- Professional placeholder avatar suitable for a developer docu -->
                 <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&q=80&w=800" alt="Girish Lade" class="avatar">
             </div>
         </div>
         <div class="scroll-indicator">
-            <span style="font-size: 0.7rem; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase;">Scroll</span>
+            <span style="font-size: 0.7rem; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase;">Scroll to Play</span>
             <div class="scroll-line"><div class="scroll-dot"></div></div>
         </div>
     </section>
 
     <!-- Section 1: Origin Story -->
-    <section id="origin">
-        <h2 class="section-title reveal-up"><span class="act-prefix">ACT I</span> The Beginning</h2>
-        <div class="narrative-content">
-            <span class="narrative-line">From Solapur, Maharashtra —</span>
-            <span class="narrative-line">emerged a developer who refused to build ordinary software.</span>
-            <span class="narrative-line">Specializing in AI-powered tools and cloud-native architectures,</span>
-            <span class="narrative-line">Girish Lade transforms complex problems into elegant, intelligent systems.</span>
+    <section id="origin" class="focus-reveal">
+        <!-- Floating Chapter Title -->
+        <div style="position: absolute; top: 120px; left: 5%; opacity: 0.6;">
+            <h2 class="section-title reveal-up"><span class="act-prefix">ACT I</span> The Origin</h2>
         </div>
         
-        <div class="origin-details reveal-up delay-2">
-            <div class="detail-item">
-                <span>Location</span>
-                <span class="detail-value">India 🇮🇳</span>
-            </div>
-            <div class="detail-item">
-                <span>Role</span>
-                <span class="detail-value">UI/UX & AI Developer</span>
-            </div>
-            <div class="detail-item">
-                <span>Company</span>
-                <span class="detail-value">Lade Stack</span>
-            </div>
-            <div class="detail-item">
-                <span>Core Focus</span>
-                <span class="detail-value">Generative AI</span>
-            </div>
+        <!-- Cinematic Subtitles -->
+        <div class="subtitle-container">
+            <span class="subtitle-cc subtitle-speaker narrative-line">[Narrator V.O.]</span>
+            <span class="subtitle-cc narrative-line">From Solapur, Maharashtra —</span><br>
+            <span class="subtitle-cc narrative-line delay-1">emerged a developer who refused to build ordinary software.</span><br>
+            <span class="subtitle-cc narrative-line delay-2">Specializing in AI-powered tools and cloud-native architectures,</span><br>
+            <span class="subtitle-cc narrative-line delay-3">Girish transforms complex problems into elegant, intelligent systems.</span>
         </div>
     </section>
 
     <!-- Section 2: Skills (Power System) -->
-    <section id="skills">
-        <h2 class="section-title reveal-up"><span class="act-prefix">ACT II</span> Core Abilities</h2>
+    <section id="skills" class="focus-reveal">
+        <h2 class="section-title reveal-up"><span class="act-prefix">EXHIBIT A</span> Capability Matrix</h2>
         <div class="skills-grid">
             <div class="skill-card reveal-up delay-1">
+                <div class="archival-stamp">SYS-01</div>
                 <h3 class="skill-category">FRONTEND FABRICATION</h3>
                 <ul class="skill-list">
                     <li>HTML5 & CSS3</li>
@@ -840,6 +945,7 @@
                 </ul>
             </div>
             <div class="skill-card reveal-up delay-2">
+                <div class="archival-stamp">SYS-02</div>
                 <h3 class="skill-category">BACKEND LOGIC</h3>
                 <ul class="skill-list">
                     <li>Node.js</li>
@@ -849,6 +955,7 @@
                 </ul>
             </div>
             <div class="skill-card reveal-up delay-3">
+                <div class="archival-stamp">SYS-03</div>
                 <h3 class="skill-category">CLOUD INFRASTRUCTURE</h3>
                 <ul class="skill-list">
                     <li>AWS</li>
@@ -858,6 +965,7 @@
                 </ul>
             </div>
             <div class="skill-card reveal-up delay-1">
+                <div class="archival-stamp">SYS-04</div>
                 <h3 class="skill-category">SIMULATION & GAMING</h3>
                 <ul class="skill-list">
                     <li>Unity</li>
@@ -869,18 +977,20 @@
 
     <!-- Section 3: Current Mission -->
     <section id="mission">
-        <h2 class="section-title reveal-up"><span class="act-prefix">ACT III</span> The Mission</h2>
+        <h2 class="section-title reveal-up"><span class="act-prefix">ACT II</span> Active Operations</h2>
         <div class="timeline">
             <div class="timeline-item">
                 <div class="timeline-node"></div>
                 <div class="timeline-content">
-                    <h3 class="timeline-title">AI-Powered Ecosystem</h3>
+                    <div class="archival-stamp">OP: ECOSYSTEM</div>
+                    <h3 class="timeline-title">AI-Powered Infrastructure</h3>
                     <p class="timeline-desc">Architecting a full suite of SaaS tools designed to automate and elevate the modern workspace.</p>
                 </div>
             </div>
             <div class="timeline-item">
                 <div class="timeline-node"></div>
                 <div class="timeline-content">
+                    <div class="archival-stamp">OP: LOTION</div>
                     <h3 class="timeline-title">Lotion AI</h3>
                     <p class="timeline-desc">Developing a powerful Notion alternative infused with generative AI for seamless documentation and thought structuring.</p>
                 </div>
@@ -888,38 +998,46 @@
             <div class="timeline-item">
                 <div class="timeline-node"></div>
                 <div class="timeline-content">
-                    <h3 class="timeline-title">Developer Utilities</h3>
-                    <p class="timeline-desc">Building API testing tools, HTML/CSS/JS AI enhancers, and automated docs writers to supercharge developer workflows.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-node"></div>
-                <div class="timeline-content">
-                    <h3 class="timeline-title">Business Solutions</h3>
-                    <p class="timeline-desc">Creating robust file-sharing platforms, dynamic dashboard tools, and smart invoice creators for modern enterprises.</p>
+                    <div class="archival-stamp">OP: UTILITY</div>
+                    <h3 class="timeline-title">Developer Tooling</h3>
+                    <p class="timeline-desc">Building API testing tools, HTML/CSS/JS AI enhancers, and automated docs writers to supercharge workflows.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Section 4: Vision -->
-    <section id="vision">
-        <h2 class="section-title reveal-up"><span class="act-prefix">ACT IV</span> The Future</h2>
-        <p class="vision-text reveal-up delay-1">
-            Empowering developers globally through <span class="highlight">open access tools</span> and <span class="highlight">intelligent systems</span>.
-        </p>
-        <p class="vision-text reveal-up delay-2">
-            Paving the way for <span class="highlight">automation</span> and <span class="highlight">AI-first infrastructure</span>.
-        </p>
-        <p class="vision-text reveal-up delay-3">
-            Establishing a legacy as a recognizable tech brand that redefines how software is built.
-        </p>
+    <section id="vision" class="focus-reveal">
+        <div style="position: absolute; top: 120px; left: 5%; opacity: 0.6;">
+            <h2 class="section-title reveal-up"><span class="act-prefix">ACT III</span> The Horizon</h2>
+        </div>
+        
+        <!-- Cinematic Subtitles -->
+        <div class="subtitle-container">
+            <span class="subtitle-cc subtitle-speaker narrative-line">[Girish Lade - Archival Tape 04]</span>
+            <span class="subtitle-cc narrative-line">"The goal is to empower developers globally...</span><br>
+            <span class="subtitle-cc narrative-line delay-1">through open access tools and intelligent systems."</span><br>
+            <span class="subtitle-cc narrative-line delay-2">"We are paving the way for AI-first infrastructure."</span>
+        </div>
     </section>
 
-    <!-- Section 5: Final Statement -->
+    <!-- Section 5: Final Statement (Credits) -->
     <section id="closing">
-        <h1 class="closing-main reveal-item">This is just the beginning.</h1>
-        <p class="closing-sub reveal-item">The future is being built — line by line.</p>
+        <div class="credits-wrapper reveal-item">
+            <div class="credit-role">Subject Matter</div>
+            <div class="credit-name">Girish Lade</div>
+            
+            <div class="credit-role">Core Technology</div>
+            <div class="credit-name">Artificial Intelligence</div>
+            
+            <div class="credit-role">Production Ecosystem</div>
+            <div class="credit-name">Lade Stack</div>
+            
+            <div style="margin-top: 5rem;">
+                <h1 class="closing-main" style="opacity: 1; transform: scale(1);">THIS IS JUST THE BEGINNING</h1>
+                <p class="closing-sub" style="opacity: 1;">THE FUTURE IS BEING BUILT — LINE BY LINE.</p>
+            </div>
+        </div>
     </section>
 
     <!-- ========================================
@@ -1002,8 +1120,8 @@
                 });
             }, observerOptions);
 
-            // Observe standard reveals and section titles
-            document.querySelectorAll('.reveal-up, .section-title, .closing-main, .closing-sub').forEach(el => {
+            // Observe standard reveals, section titles, and new documentary components
+            document.querySelectorAll('.reveal-up, .section-title, .closing-main, .closing-sub, .focus-reveal, .credits-wrapper').forEach(el => {
                 revealObserver.observe(el);
             });
 
