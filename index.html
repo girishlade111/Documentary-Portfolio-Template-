@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Girish Lade | Building the Future with AI</title>
+    
+    <!-- Fonts for Cinematic Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500&family=Montserrat:wght@200;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================================
+           CSS START: VARIABLES & RESET
+           ======================================== */
+        :root {
+            --bg-color: #0e0e0e;
+            --accent-orange: #ff5e00;
+            --accent-orange-glow: rgba(255, 94, 0, 0.4);
+            --accent-blue: #00e5ff;
+            --accent-blue-glow: rgba(0, 229, 255, 0.4);
+            --text-main: #f0f0f0;
+            --text-muted: #888888;
+            --font-heading: 'Montserrat', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-cinematic: 'Cinzel', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #0e0e0e 100%);
+        }
+
+        /* ========================================
+           CINEMATIC OVERLAYS
+           ======================================== */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 9997;
+            box-shadow: inset 0 0 200px rgba(0,0,0,0.9);
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .energy-flash {
+            position: fixed;
+            top: 0; left: -100%; width: 50vw; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-orange), transparent);
+            z-index: 9999;
+            box-shadow: 0 0 20px var(--accent-orange);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ========================================
+           GLOBAL ANIMATION CLASSES
+           ======================================== */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .reveal-up.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-1 { transition-delay: 0.2s; }
+        .delay-2 { transition-delay: 0.4s; }
+        .delay-3 { transition-delay: 0.6s; }
+
+        section {
+            position: relative;
+            z-index: 10;
+            padding: 100px 5%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            letter-spacing: 8px;
+            color: var(--accent-orange);
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0; bottom: -10px;
+            height: 1px;
+            width: 0;
+            background: var(--accent-orange);
+            transition: width 1s ease-in-out;
+            box-shadow: 0 0 10px var(--accent-orange);
+        }
+
+        .section-title.active::after {
+            width: 100%;
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+        #hero {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8%;
+        }
+
+        .hero-content {
+            flex: 1;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-family: var(--font-heading);
+            font-size: clamp(3rem, 6vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            overflow: hidden;
+        }
+
+        .hero-title .letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: opacity 0.8s cubic-bezier(0.2, 1, 0.2, 1), transform 0.8s cubic-bezier(0.2, 1, 0.2, 1);
+        }
+
+        .hero-title.active .letter {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hero-subtitle-wrapper {
+            font-family: var(--font-body);
+            font-size: clamp(1rem, 1.5vw, 1.5rem);
+            color: var(--accent-blue);
+            margin-bottom: 2rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            height: 30px; /* Prevent layout shift */
+        }
+
+        .typed-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: var(--accent-blue);
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .hero-caption {
+            font-family: var(--font-cinematic);
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-style: italic;
+            border-left: 2px solid var(--accent-orange);
+            padding-left: 1rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 1s ease 2s; /* Delayed fade in */
+        }
+
+        .hero-caption.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .hero-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(1.1);
+            filter: blur(10px);
+            transition: all 2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s;
+        }
+
+        .avatar-wrapper.active {
+            opacity: 1;
+            transform: scale(1);
+            filter: blur(0);
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            filter: grayscale(20%) contrast(110%);
+        }
+
+        .energy-ring {
+            position: absolute;
+            top: -10px; left: -10px; right: -10px; bottom: -10px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            background: linear-gradient(45deg, var(--accent-orange), transparent, var(--accent-blue)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            animation: rotateRing 10s linear infinite;
+            z-index: 1;
+            opacity: 0.7;
+        }
+
+        .energy-ring-2 {
+            position: absolute;
+            top: -25px; left: -25px; right: -25px; bottom: -25px;
+            border-radius: 50%;
+            border: 1px dashed rgba(255, 94, 0, 0.3);
+            animation: rotateRing 15s linear infinite reverse;
+            z-index: 1;
+        }
+
+        @keyframes rotateRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeIn 1s forwards 3s;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--text-muted), transparent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-dot {
+            position: absolute;
+            top: 0;
+            left: -1px;
+            width: 3px;
+            height: 10px;
+            background: var(--accent-orange);
+            border-radius: 2px;
+            animation: scrollDown 2s infinite cubic-bezier(0.15, 0.41, 0.69, 0.94);
+        }
+
+        @keyframes scrollDown {
+            0% { top: -10px; opacity: 0; }
+            30% { opacity: 1; }
+            100% { top: 60px; opacity: 0; }
+        }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* ========================================
+           SECTION 1: ORIGIN STORY
+           ======================================== */
+        #origin {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .narrative-text {
+            font-family: var(--font-cinematic);
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            line-height: 1.6;
+            color: var(--text-main);
+            margin-bottom: 2rem;
+        }
+
+        .narrative-line {
+            display: block;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease;
+        }
+
+        .narrative-line.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .origin-details {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+            flex-wrap: wrap;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .detail-value { color: var(--text-main); font-weight: bold; font-size: 1.1rem;}
+
+        /* ========================================
+           SECTION 2: SKILL SET (POWER SYSTEM)
+           ======================================== */
+        #skills {
+            padding: 100px 8%;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            perspective: 1000px;
+        }
+
+        .skill-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+            cursor: pointer;
+        }
+
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 0%, var(--accent-orange-glow), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 0;
+        }
+
+        .skill-card:hover::before {
+            opacity: 0.3;
+        }
+
+        .skill-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, var(--accent-orange), var(--accent-blue)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .skill-card:hover::after {
+            opacity: 1;
+        }
+
+        .skill-category {
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            color: var(--accent-orange);
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            transform: translateZ(30px);
+        }
+
+        .skill-list {
+            list-style: none;
+            position: relative;
+            z-index: 1;
+            transform: translateZ(20px);
+        }
+
+        .skill-list li {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+        }
+
+        .skill-list li::before {
+            content: '▹';
+            color: var(--accent-blue);
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* ========================================
+           SECTION 3: CURRENT MISSION (TIMELINE)
+           ======================================== */
+        #mission {
+            padding: 100px 8%;
+            align-items: center;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            width: 100%;
+            margin-top: 4rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), var(--accent-blue), rgba(255,255,255,0.1), transparent);
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 50%;
+            position: relative;
+            margin-bottom: 4rem;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: 50%;
+        }
+
+        .timeline-item.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-node {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: var(--bg-color);
+            border: 2px solid var(--accent-blue);
+            box-shadow: 0 0 15px var(--accent-blue-glow);
+            z-index: 2;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s;
+        }
+
+        .timeline-item.active .timeline-node {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .timeline-content {
+            width: 80%;
+            padding: 2rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            text-align: right;
+            margin-right: 30px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            text-align: left;
+            margin-left: 30px;
+        }
+
+        .timeline-content:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: translateY(-5px);
+        }
+
+        .timeline-title {
+            font-family: var(--font-heading);
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           SECTION 4: VISION
+           ======================================== */
+        #vision {
+            text-align: center;
+            padding: 150px 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #vision::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at center, rgba(0, 229, 255, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: slowPulse 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes slowPulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .vision-text {
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            line-height: 2;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            color: #d0d0d0;
+        }
+
+        .highlight {
+            color: var(--accent-orange);
+            font-weight: 500;
+        }
+
+        /* ========================================
+           SECTION 5: FINAL STATEMENT
+           ======================================== */
+        #closing {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: #000;
+            position: relative;
+            z-index: 20;
+        }
+
+        .closing-main {
+            font-family: var(--font-heading);
+            font-size: clamp(2rem, 5vw, 5rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 2s cubic-bezier(0.2, 1, 0.2, 1);
+        }
+
+        .closing-main.active {
+            opacity: 1;
+            transform: scale(1);
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+        }
+
+        .closing-sub {
+            font-family: var(--font-body);
+            font-size: clamp(1rem, 1.5vw, 1.5rem);
+            color: var(--accent-orange);
+            letter-spacing: 3px;
+            opacity: 0;
+            transition: opacity 2s ease 1s;
+        }
+
+        .closing-sub.active {
+            opacity: 1;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN
+           ======================================== */
+        @media (max-width: 968px) {
+            #hero {
+                flex-direction: column-reverse;
+                text-align: center;
+                justify-content: center;
+                gap: 4rem;
+            }
+            .hero-caption {
+                border-left: none;
+                border-top: 2px solid var(--accent-orange);
+                padding-left: 0;
+                padding-top: 1rem;
+                display: inline-block;
+            }
+            .timeline::before { left: 20px; }
+            .timeline-item, .timeline-item:nth-child(even) {
+                justify-content: flex-start;
+                padding-left: 60px;
+                padding-right: 0;
+            }
+            .timeline-node { left: 20px; transform: translate(-50%, -50%) scale(0); }
+            .timeline-item.active .timeline-node { transform: translate(-50%, -50%) scale(1); }
+            .timeline-content, .timeline-item:nth-child(odd) .timeline-content, .timeline-item:nth-child(even) .timeline-content {
+                width: 100%;
+                text-align: left;
+                margin: 0;
+            }
+            .avatar-wrapper { width: 280px; height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cinematic Overlays -->
+    <div class="noise-overlay"></div>
+    <div class="vignette"></div>
+    <canvas id="particle-canvas"></canvas>
+    <div class="energy-flash" id="energy-flash"></div>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title" id="main-title">GIRISH LADE</h1>
+            <div class="hero-subtitle-wrapper">
+                <span id="typed-text"></span><span class="typed-cursor"></span>
+            </div>
+            <p class="hero-caption" id="hero-caption">A modern builder shaping intelligent systems.</p>
+        </div>
+        <div class="hero-visual">
+            <div class="avatar-wrapper" id="avatar-container">
+                <div class="energy-ring"></div>
+                <div class="energy-ring-2"></div>
+                <!-- Professional placeholder avatar suitable for a developer docu -->
+                <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&q=80&w=800" alt="Girish Lade" class="avatar">
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span style="font-size: 0.7rem; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase;">Scroll</span>
+            <div class="scroll-line"><div class="scroll-dot"></div></div>
+        </div>
+    </section>
+
+    <!-- Section 1: Origin Story -->
+    <section id="origin">
+        <h2 class="section-title reveal-up">The Beginning</h2>
+        <div class="narrative-content">
+            <span class="narrative-line">From Solapur, Maharashtra —</span>
+            <span class="narrative-line">emerged a developer who refused to build ordinary software.</span>
+            <span class="narrative-line">Specializing in AI-powered tools and cloud-native architectures,</span>
+            <span class="narrative-line">Girish Lade transforms complex problems into elegant, intelligent systems.</span>
+        </div>
+        
+        <div class="origin-details reveal-up delay-2">
+            <div class="detail-item">
+                <span>Location</span>
+                <span class="detail-value">India 🇮🇳</span>
+            </div>
+            <div class="detail-item">
+                <span>Role</span>
+                <span class="detail-value">UI/UX & AI Developer</span>
+            </div>
+            <div class="detail-item">
+                <span>Company</span>
+                <span class="detail-value">Lade Stack</span>
+            </div>
+            <div class="detail-item">
+                <span>Core Focus</span>
+                <span class="detail-value">Generative AI</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Skills (Power System) -->
+    <section id="skills">
+        <h2 class="section-title reveal-up">Core Abilities</h2>
+        <div class="skills-grid">
+            <div class="skill-card reveal-up delay-1">
+                <h3 class="skill-category">FRONTEND FABRICATION</h3>
+                <ul class="skill-list">
+                    <li>HTML5 & CSS3</li>
+                    <li>JavaScript</li>
+                    <li>TypeScript</li>
+                    <li>React & Flutter</li>
+                </ul>
+            </div>
+            <div class="skill-card reveal-up delay-2">
+                <h3 class="skill-category">BACKEND LOGIC</h3>
+                <ul class="skill-list">
+                    <li>Node.js</li>
+                    <li>MongoDB</li>
+                    <li>MySQL</li>
+                    <li>Oracle</li>
+                </ul>
+            </div>
+            <div class="skill-card reveal-up delay-3">
+                <h3 class="skill-category">CLOUD INFRASTRUCTURE</h3>
+                <ul class="skill-list">
+                    <li>AWS</li>
+                    <li>Google Cloud</li>
+                    <li>Docker</li>
+                    <li>Git</li>
+                </ul>
+            </div>
+            <div class="skill-card reveal-up delay-1">
+                <h3 class="skill-category">SIMULATION & GAMING</h3>
+                <ul class="skill-list">
+                    <li>Unity</li>
+                    <li>Unreal Engine</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Current Mission -->
+    <section id="mission">
+        <h2 class="section-title reveal-up">The Mission</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-content">
+                    <h3 class="timeline-title">AI-Powered Ecosystem</h3>
+                    <p class="timeline-desc">Architecting a full suite of SaaS tools designed to automate and elevate the modern workspace.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-content">
+                    <h3 class="timeline-title">Lotion AI</h3>
+                    <p class="timeline-desc">Developing a powerful Notion alternative infused with generative AI for seamless documentation and thought structuring.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-content">
+                    <h3 class="timeline-title">Developer Utilities</h3>
+                    <p class="timeline-desc">Building API testing tools, HTML/CSS/JS AI enhancers, and automated docs writers to supercharge developer workflows.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-content">
+                    <h3 class="timeline-title">Business Solutions</h3>
+                    <p class="timeline-desc">Creating robust file-sharing platforms, dynamic dashboard tools, and smart invoice creators for modern enterprises.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Vision -->
+    <section id="vision">
+        <h2 class="section-title reveal-up">The Future</h2>
+        <p class="vision-text reveal-up delay-1">
+            Empowering developers globally through <span class="highlight">open access tools</span> and <span class="highlight">intelligent systems</span>.
+        </p>
+        <p class="vision-text reveal-up delay-2">
+            Paving the way for <span class="highlight">automation</span> and <span class="highlight">AI-first infrastructure</span>.
+        </p>
+        <p class="vision-text reveal-up delay-3">
+            Establishing a legacy as a recognizable tech brand that redefines how software is built.
+        </p>
+    </section>
+
+    <!-- Section 5: Final Statement -->
+    <section id="closing">
+        <h1 class="closing-main reveal-item">This is just the beginning.</h1>
+        <p class="closing-sub reveal-item">The future is being built — line by line.</p>
+    </section>
+
+    <!-- ========================================
+         JAVASCRIPT START
+         ======================================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* ---------------------------------------------------
+               1. INITIAL CINEMATIC LOAD & ENERGY FLASH
+               --------------------------------------------------- */
+            const energyFlash = document.getElementById('energy-flash');
+            setTimeout(() => {
+                energyFlash.style.opacity = '1';
+                energyFlash.style.transform = 'translateX(200vw)';
+                energyFlash.style.transition = 'transform 0.5s ease-in, opacity 0.5s ease-out';
+                
+                setTimeout(() => { energyFlash.remove(); }, 600);
+            }, 500);
+
+            setTimeout(() => {
+                document.getElementById('avatar-container').classList.add('active');
+                document.getElementById('hero-caption').classList.add('active');
+            }, 800);
+
+            /* ---------------------------------------------------
+               2. LETTER-BY-LETTER HERO TITLE ANIMATION
+               --------------------------------------------------- */
+            const title = document.getElementById('main-title');
+            const text = title.textContent;
+            title.innerHTML = '';
+            
+            // Wrap each letter in a span
+            [...text].forEach((char, index) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.className = char === ' ' ? 'letter space' : 'letter';
+                if(char === ' ') span.style.width = '20px';
+                span.style.transitionDelay = `${index * 0.08}s`;
+                title.appendChild(span);
+            });
+
+            setTimeout(() => {
+                title.classList.add('active');
+            }, 300);
+
+            /* ---------------------------------------------------
+               3. TYPING EFFECT FOR SUBTITLE
+               --------------------------------------------------- */
+            const subtitleText = "UI/UX Developer • AI Innovator • Founder";
+            const typedTarget = document.getElementById('typed-text');
+            let charIndex = 0;
+
+            function typeWriter() {
+                if (charIndex < subtitleText.length) {
+                    typedTarget.textContent += subtitleText.charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter, Math.random() * 50 + 50); // Cinematic variable speed
+                }
+            }
+            
+            setTimeout(typeWriter, 1500); // Start typing after title animates
+
+            /* ---------------------------------------------------
+               4. INTERSECTION OBSERVER FOR SCROLL REVEALS
+               --------------------------------------------------- */
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2
+            };
+
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // Optional: unobserve after revealing for one-time effect
+                        // observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe standard reveals and section titles
+            document.querySelectorAll('.reveal-up, .section-title, .closing-main, .closing-sub').forEach(el => {
+                revealObserver.observe(el);
+            });
+
+            // Observe Narrative lines with staggering
+            const narrativeObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const lines = entry.target.querySelectorAll('.narrative-line');
+                        lines.forEach((line, idx) => {
+                            setTimeout(() => {
+                                line.classList.add('active');
+                            }, idx * 400); // Stagger timing
+                        });
+                        narrativeObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            const narrativeContainer = document.querySelector('.narrative-content');
+            if(narrativeContainer) narrativeObserver.observe(narrativeContainer);
+
+            // Observe Timeline items
+            document.querySelectorAll('.timeline-item').forEach(el => {
+                revealObserver.observe(el);
+            });
+
+            /* ---------------------------------------------------
+               5. SKILL CARDS 3D TILT EFFECT
+               --------------------------------------------------- */
+            const cards = document.querySelectorAll('.skill-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left; // x position within the element.
+                    const y = e.clientY - rect.top;  // y position within the element.
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = ((y - centerY) / centerY) * -10; // Max rotation 10deg
+                    const rotateY = ((x - centerX) / centerX) * 10;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+                    card.style.transition = 'transform 0.5s ease';
+                });
+
+                card.addEventListener('mouseenter', () => {
+                    card.style.transition = 'transform 0.1s';
+                });
+            });
+
+            /* ---------------------------------------------------
+               6. BACKGROUND PARTICLE SYSTEM (CANVAS)
+               --------------------------------------------------- */
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 1.5 + 0.5;
+                    this.speedY = (Math.random() * 0.5 + 0.1) * -1; // Move up slowly
+                    this.speedX = (Math.random() - 0.5) * 0.3;
+                    this.opacity = Math.random() * 0.5;
+                    // Mix of orange and blue particles
+                    this.color = Math.random() > 0.8 ? 'rgba(0, 229, 255,' : 'rgba(255, 94, 0,'; 
+                }
+                update() {
+                    this.y += this.speedY;
+                    this.x += this.speedX;
+                    if (this.y < 0) {
+                        this.y = canvas.height;
+                        this.x = Math.random() * canvas.width;
+                    }
+                }
+                draw() {
+                    ctx.fillStyle = `${this.color}${this.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                const particleCount = Math.min(window.innerWidth / 15, 100); // Responsive amount
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+
+            initParticles();
+            animateParticles();
+        });
+    </script>
+</body>
+</html>
