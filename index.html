@@ -62,6 +62,75 @@
             box-shadow: inset 0 0 200px rgba(0,0,0,0.9);
         }
 
+        /* ========================================
+           DOCUMENTARY CAMERA UI
+           ======================================== */
+        .cinematic-bar {
+            position: fixed;
+            left: 0;
+            width: 100vw;
+            height: 8vh;
+            background: #000;
+            z-index: 9996;
+            pointer-events: none;
+        }
+        .cinematic-bar.top { top: 0; }
+        .cinematic-bar.bottom { bottom: 0; }
+
+        .camera-ui {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 9998;
+            padding: 2rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-family: 'Courier New', Courier, monospace; /* Monospace for camera data */
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        .camera-top, .camera-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rec-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ff3333;
+            font-weight: bold;
+        }
+
+        .rec-dot {
+            width: 12px; height: 12px;
+            background-color: #ff3333;
+            border-radius: 50%;
+            animation: recBlink 1s infinite;
+        }
+
+        @keyframes recBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .chapter-marker {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        
+        .act-prefix {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            letter-spacing: 4px;
+        }
+
         #particle-canvas {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -685,6 +754,22 @@
     <!-- Cinematic Overlays -->
     <div class="noise-overlay"></div>
     <div class="vignette"></div>
+    
+    <!-- Camera UI / Letterbox -->
+    <div class="cinematic-bar top"></div>
+    <div class="cinematic-bar bottom"></div>
+    <div class="camera-ui">
+        <div class="camera-top">
+            <div class="rec-indicator"><div class="rec-dot"></div> REC</div>
+            <div>ISO 800</div>
+            <div>F 2.8</div>
+        </div>
+        <div class="camera-bottom">
+            <div>CH 1/2 AUDIO</div>
+            <div id="timecode">00:00:00:00</div>
+        </div>
+    </div>
+
     <canvas id="particle-canvas"></canvas>
     <div class="energy-flash" id="energy-flash"></div>
 
@@ -713,7 +798,7 @@
 
     <!-- Section 1: Origin Story -->
     <section id="origin">
-        <h2 class="section-title reveal-up">The Beginning</h2>
+        <h2 class="section-title reveal-up"><span class="act-prefix">ACT I</span> The Beginning</h2>
         <div class="narrative-content">
             <span class="narrative-line">From Solapur, Maharashtra —</span>
             <span class="narrative-line">emerged a developer who refused to build ordinary software.</span>
@@ -743,7 +828,7 @@
 
     <!-- Section 2: Skills (Power System) -->
     <section id="skills">
-        <h2 class="section-title reveal-up">Core Abilities</h2>
+        <h2 class="section-title reveal-up"><span class="act-prefix">ACT II</span> Core Abilities</h2>
         <div class="skills-grid">
             <div class="skill-card reveal-up delay-1">
                 <h3 class="skill-category">FRONTEND FABRICATION</h3>
@@ -784,7 +869,7 @@
 
     <!-- Section 3: Current Mission -->
     <section id="mission">
-        <h2 class="section-title reveal-up">The Mission</h2>
+        <h2 class="section-title reveal-up"><span class="act-prefix">ACT III</span> The Mission</h2>
         <div class="timeline">
             <div class="timeline-item">
                 <div class="timeline-node"></div>
@@ -819,7 +904,7 @@
 
     <!-- Section 4: Vision -->
     <section id="vision">
-        <h2 class="section-title reveal-up">The Future</h2>
+        <h2 class="section-title reveal-up"><span class="act-prefix">ACT IV</span> The Future</h2>
         <p class="vision-text reveal-up delay-1">
             Empowering developers globally through <span class="highlight">open access tools</span> and <span class="highlight">intelligent systems</span>.
         </p>
@@ -1034,6 +1119,38 @@
 
             initParticles();
             animateParticles();
+
+            /* ---------------------------------------------------
+               7. DOCUMENTARY TIMECODE GENERATOR
+               --------------------------------------------------- */
+            const timecodeEl = document.getElementById('timecode');
+            let frame = 0;
+            let sec = 0;
+            let min = 0;
+            let hr = 1; // Start at 1 hour for that "raw footage" feel
+
+            function updateTimecode() {
+                frame++;
+                if (frame >= 24) { // 24 frames per second cinematic standard
+                    frame = 0;
+                    sec++;
+                    if (sec >= 60) {
+                        sec = 0;
+                        min++;
+                        if (min >= 60) {
+                            min = 0;
+                            hr++;
+                        }
+                    }
+                }
+                
+                const pad = (num) => num.toString().padStart(2, '0');
+                timecodeEl.textContent = `${pad(hr)}:${pad(min)}:${pad(sec)}:${pad(frame)}`;
+                
+                // Run roughly at 24fps
+                setTimeout(updateTimecode, 1000 / 24);
+            }
+            updateTimecode();
         });
     </script>
 </body>
